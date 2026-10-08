@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -18,11 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -63,10 +57,7 @@ fun TipCalculatorScreen(
                 modifier = textFieldsModifier,
                 value = state.amount,
                 keyboardOptions = customQuantityKeyboardOptions,
-                onValueChange = {
-                    newText ->
-                    //totalAmount = newText
-                },
+                onValueChange = viewModel::changeAmount,
             )
             val customGuestKeyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number
@@ -75,7 +66,7 @@ fun TipCalculatorScreen(
                 value = state.guests,
                 modifier = textFieldsModifier,
                 keyboardOptions = customGuestKeyboardOptions,
-                onValueChange = {},
+                onValueChange = viewModel::changeGuests,
             )
             Row(
                 modifier = Modifier
@@ -96,37 +87,15 @@ fun TipCalculatorScreen(
             Slider(
                 enabled = state.tip,
                 value = state.tipAmount,
-                onValueChange = {
-                    //tipValue = it
-                },
+                onValueChange = viewModel::changeTipValue,
                 steps = 3,
                 valueRange = 0f..4f
 
             )
-            // TODO Corregir esto para que vaya perfecto
-            //val isCalculateButtonEnabled = guestNumberState.text.isNotBlank() && totalAmount.toFloat() > 0
-            //val guestNumber = guestNumberState.text.toString().toIntOrNull()
-            //val totalAmount = totalAmount.toString().toDoubleOrNull()
-
-            //val isCalculateButtonEnabled  = if (guestNumber != null && totalAmount != null)
-            //    guestNumber > 0 && totalAmount > 0.0
-             //else
-            //    false
-
             Button(
                 enabled = state.isCaculateEnabled,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = viewModel::calculateSplit
-
-                    /**
-                    val totalWithTip = when (tipValue) {
-                        1.0f -> totalAmount!! * 1.05f
-                        2.0f -> totalAmount!! * 1.1f
-                        else -> totalAmount!!
-
-                    }
-                    splitResult = (totalWithTip.div(guestNumber!!)).toString()*/
-
             ) {
                 Icon(painterResource(R.drawable.icon_calculate_24),
                     contentDescription = "Calculate")
@@ -134,8 +103,8 @@ fun TipCalculatorScreen(
 
         }
             if (state.result.isNotBlank())
-                Text(stringResource(R.string.splitLabel, state.result));
-    }
+                Text(stringResource(R.string.splitLabel, state.result))
+        }
 }
 }
 @Composable
